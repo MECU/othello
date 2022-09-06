@@ -18,6 +18,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_06_012554) do
     t.integer "black"
     t.integer "white"
     t.jsonb "board", null: false
+    t.jsonb "history", null: false
+    t.integer "moves", null: false, default: 1
+    t.boolean "turn", null: false, default: 0
     t.integer "black_score"
     t.integer "white_score"
     t.integer "winner"
