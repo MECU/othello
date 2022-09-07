@@ -62,11 +62,11 @@ class Board < ApplicationRecord
     def search?(s, dir)
       return false unless should_traverse?(dir, s)
       s += dir
-      return false unless s > -1 && s < 64
+      return false unless (0..63) === s
       return false if board[s].nil?
       return false if board[s] == player_turn
 
-      while s > -1 && s < 63
+      while (0..63) === s
         return false unless should_traverse?(dir, s)
         s += dir
         return false if board[s].nil?
@@ -77,8 +77,8 @@ class Board < ApplicationRecord
     end
 
     def player_turn
-      return 0 if turn == false
-      1
+      return 1 if turn
+      0
     end
 
     def update_board(s)
@@ -86,7 +86,7 @@ class Board < ApplicationRecord
         next unless should_traverse?(dir, s)
         ss = s + dir
         valid = false
-        while ss > -1 && ss < 63 && !valid
+        while (0..63) === ss && !valid
           break if board[ss].nil?
           valid = true if board[ss] == player_turn
           break unless should_traverse?(dir, ss)
@@ -96,7 +96,7 @@ class Board < ApplicationRecord
         next unless valid
 
         ss = s + dir
-        while ss > -1 && ss < 63
+        while (0..63) === ss
           break if board[ss] == player_turn || board[ss].nil?
           board[ss] = player_turn
           break unless should_traverse?(dir, ss)
@@ -106,25 +106,17 @@ class Board < ApplicationRecord
     end
 
     def should_traverse?(dir, s)
-      return false if (s + dir) < 0 || (s + dir) > 63
+      return false unless (0..63) === s + dir
 
       case dir
-        when -9
+        when -9, -1, 7
           !(s % 8).zero?
         when -8
           s > 8
-        when -7
+        when -7, 1, 9
           s % 8 != 7
-        when -1
-          !(s % 8).zero?
-        when 1
-          s % 8 != 7
-        when 7
-          !(s % 8).zero?
         when 8
           s < 55
-        when 9
-          s % 8 != 7
         else
           raise ArgumentError, "dir #{dir} not supported"
       end
